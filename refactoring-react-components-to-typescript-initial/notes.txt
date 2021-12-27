@@ -31,4 +31,115 @@ nodeResolve({
 babel({
 	extensions: [".js"], // extensions: [".js", ".ts", ".tsx"]
 
+		],
+	"@babel/preset-react", 
+],											 //"@babel/preset-typescript",
+                         //]
+
+5. change main.js to main.tsx
+
+6. refractoring count display
+```
+import * as React from "react";
+import cx from "clsx";
+import { scope } from "../lib/utils";
+
+function CountDisplay({ count, className }) {
+	let countString = String(Math.max(Math.min(count, 999), -99));
+	return (
+		<div className={cx(scope("count-display"), className)}>{countString}</div>
+	);
+}
+
+export { CountDisplay };
+```
+
+2nd way of writing typescript (better)
+```
+import * as React from "react";
+import cx from "clsx";
+import { scope } from "../lib/utils";
+
+function CountDisplay({ count, className }: {CountDisplayProps}) {
+	let countString = String(Math.max(Math.min(count, 999), -99));
+	return (
+		<div className={cx(scope("count-display"), className)}>{countString}</div>
+	);
+}
+
+export { CountDisplay };
+
+interface {
+	count: number;
+	className?: string;
+}
+```
+function CountDisplay({ count, className }: {CountDisplayProps}) {
+
+// add type infront of function
+const CountDisplay: React.FunctionComponent<CountDisplayProps> =
+	function CountDisplay({ count, className })
+
+// VoidFunctionComponent is a type that does not allow children as props
+const CountDisplay: React.VoidFunctionComponent<CountDisplayProps> =
+	function CountDisplay({ count, className })
+
+// VFC can be used as shortform
+const CountDisplay: React.VFC<CountDisplayProps> =
+	function CountDisplay({ count, className })
+```
+
+7. typing react hooks
+```
+let rowArray = React.useMemo(() =>  Array(board.rows).fill(null), [board.rows]);
+let rowArray = React.useMemo<null[]>(() =>  Array(board.rows).fill(null), [board.rows]);
+```
+
+```
+const [time, setTime] = useState(0)
+const [time, setTime] = useState<number>(0)
+```
+
+8. typing react hooks useReducer
+```
+// javascript
+function reducer(context, event) {
+	if (event.type === 'RESET') {
+		return {
+			...context,
+			gameState: 'idle',
+			cells: resetCells(event.board),
+			initialized: false
+		}
+	}
+}
+
+// typescript
+interface BoardContext {
+	gameState: GameState;
+	cells: Cell[];
+	mines: number[];
+	initialized: boolean;
+}
+
+interface BoardEvent {
+	type: 
+		| "RESET" 
+		| "REVEAL_CELL"
+		| "REVEAL_ADJACENT_CELLS"
+		| "MARK_CELL"
+		| "MARK_REMAINING_MINES";
+	board?: BoardConfig;
+	index?: number;
+}
+function reducer(context: BoardContext, event): BoardContext {
+	if (event.type === 'RESET') {
+		return {
+			...context,
+			gameState: 'idle',
+			cells: resetCells(event.board),
+			initialized: false
+		}
+	}
+}
 
